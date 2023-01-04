@@ -5,7 +5,7 @@ import { IDbStore, IIndexSearch, IIndexSpec, IStoreRecord, IStoreSchema, IDotNet
 
 export class IndexedDbManager {
 
-    private dbInstance:any = undefined;
+    private dbInstance: any = undefined;
     private dotnetCallback = (message: string) => { };
 
     constructor() { }
@@ -29,11 +29,11 @@ export class IndexedDbManager {
         } catch (e) {
             this.dbInstance = await idb.open(dbStore.dbName);
         }
-        
+
         return `IndexedDB ${data.dbName} opened`;
     }
 
-    public getDbInfo = async (dbName: string) : Promise<IDbInformation> => {
+    public getDbInfo = async (dbName: string): Promise<IDbInformation> => {
         if (!this.dbInstance) {
             this.dbInstance = await idb.open(dbName);
         }
@@ -55,7 +55,7 @@ export class IndexedDbManager {
         return dbInfo;
     }
 
-    public deleteDb = async(dbName: string): Promise<string> => {
+    public deleteDb = async (dbName: string): Promise<string> => {
         this.dbInstance.close();
 
         await idb.delete(dbName);
@@ -78,12 +78,27 @@ export class IndexedDbManager {
         return `Added new record with id ${result}`;
     }
 
+    public addMutipleRecord = async (records: IStoreRecord[]): Promise<string> => {
+        if (records.length == 0)
+            return 'Added 0 item';
+        const stName = records[0].storename;
+        const tx = this.getTransaction(this.dbInstance, stName, 'readwrite');
+        const objectStore = tx.objectStore(stName);
+        records.forEach(async record => {
+            let itemToSave = record.data;
+            itemToSave = this.checkForKeyPath(objectStore, itemToSave);
+            await objectStore.add(itemToSave, record.key);
+        });
+
+        return `Added ${records.length} record`;
+    }
+
     public updateRecord = async (record: IStoreRecord): Promise<string> => {
         const stName = record.storename;
         const tx = this.getTransaction(this.dbInstance, stName, 'readwrite');
 
         const result = await tx.objectStore(stName).put(record.data, record.key);
-       
+
         return `updated record with id ${result}`;
     }
 
@@ -98,7 +113,7 @@ export class IndexedDbManager {
     }
 
     public clearStore = async (storeName: string): Promise<string> => {
-        
+
         const tx = this.getTransaction(this.dbInstance, storeName, 'readwrite');
 
         await tx.objectStore(storeName).clear();
@@ -165,7 +180,7 @@ export class IndexedDbManager {
                 } else {
                     console.error('Undefined error in getTransaction()');
                 }
-                
+
             });
 
         return tx;

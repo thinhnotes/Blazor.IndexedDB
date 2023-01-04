@@ -133,6 +133,26 @@ namespace TG.Blazor.IndexedDB
         }
 
         /// <summary>
+        /// Adds a new record/object to the specified store
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="recordsToAdd">List instance of StoreRecord that provides the store name and the data to add</param>
+        /// <returns></returns>
+        public async Task AddMutipleRecord<T>(IList<StoreRecord<T>> recordsToAdd)
+        {
+            await EnsureDbOpen();
+            try
+            {
+                var result = await CallJavascript<StoreRecord<T>, string>(DbFunctions.AddMutipleRecord, recordsToAdd);
+                RaiseNotification(IndexDBActionOutCome.Successful, result);
+            }
+            catch (JSException e)
+            {
+                RaiseNotification(IndexDBActionOutCome.Failed, e.Message);
+            }
+        }
+
+        /// <summary>
         /// Updates and existing record
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -304,6 +324,11 @@ namespace TG.Blazor.IndexedDB
         private async Task<TResult> CallJavascript<TData, TResult>(string functionName, TData data)
         {
             return await _jsRuntime.InvokeAsync<TResult>($"{InteropPrefix}.{functionName}", data);
+        }
+
+        private async Task<TResult> CallJavascript<TData, TResult>(string functionName, IList<TData> datas)
+        {
+            return await _jsRuntime.InvokeAsync<TResult>($"{InteropPrefix}.{functionName}", datas);
         }
 
         private async Task<TResult> CallJavascript<TResult>(string functionName, params object[] args)

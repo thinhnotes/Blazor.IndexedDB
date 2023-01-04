@@ -177,6 +177,10 @@ People.AddRange(result);
 
 To update a record call ```IndexedDbManager.UpdateRecord<T>(StoreRecord<T> recordToUpdate)```.
 
+### Add Mutiple records
+
+To update a record call ```IndexedDbManager.AddMutipleRecord<T>(IList<StoreRecord<T>> recordsToAdd)```.
+
 ### Deleting a record
 
 To delete a record call ```IndexedDbManager.DeleteRecord<TInput>(string storeName, TInput id)```.

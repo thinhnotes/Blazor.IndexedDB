@@ -8,6 +8,7 @@
         public const string CreateDb = "createDb";
         public const string DeleteDb = "deleteDb";
         public const string AddRecord = "addRecord";
+        public const string AddMutipleRecord = "addMutipleRecord";
         public const string UpdateRecord = "updateRecord";
         public const string GetRecords = "getRecords";
         public const string OpenDb = "openDb";
