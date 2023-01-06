@@ -138,7 +138,7 @@ namespace TG.Blazor.IndexedDB
         /// <typeparam name="T"></typeparam>
         /// <param name="recordsToAdd">List instance of StoreRecord that provides the store name and the data to add</param>
         /// <returns></returns>
-        public async Task AddMutipleRecord<T>(IList<StoreRecord<T>> recordsToAdd)
+        public async Task AddMutipleRecord<T>(IEnumerable<StoreRecord<T>> recordsToAdd)
         {
             await EnsureDbOpen();
             try
@@ -326,7 +326,7 @@ namespace TG.Blazor.IndexedDB
             return await _jsRuntime.InvokeAsync<TResult>($"{InteropPrefix}.{functionName}", data);
         }
 
-        private async Task<TResult> CallJavascript<TData, TResult>(string functionName, IList<TData> datas)
+        private async Task<TResult> CallJavascript<TData, TResult>(string functionName, IEnumerable<TData> datas)
         {
             return await _jsRuntime.InvokeAsync<TResult>($"{InteropPrefix}.{functionName}", datas);
         }
